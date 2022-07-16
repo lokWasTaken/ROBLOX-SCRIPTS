@@ -1,22 +1,22 @@
-local owner:Player = script.Parent.Parent
+if not owner then
+	owner = script.Parent.Parent
 
-local function NS(code, parent)
-	local ss = script.ServerScript:Clone()
-	ss.Code.Value = code
-	ss.Parent = parent
-	ss.Disabled = false
+	function NS(code, parent)
+		local ss = script.ServerScript:Clone()
+		ss.Code.Value = code
+		ss.Parent = parent
+		ss.Disabled = false
+	end
+
+	function NLS(code, parent)
+		local ls = script.LocalScript:Clone()
+		ls.Code.Value = code
+		ls.Parent = parent
+		ls.Disabled = false
+	end
+
+	task.wait(1)
 end
-
-local function NLS(code, parent)
-	local ls = script.LocalScript:Clone()
-	ls.Code.Value = code
-	ls.Parent = parent
-	ls.Disabled = false
-end
-
-task.wait(1)
-
---// Copy below this line
 
 local function weld(p0, p1)
 	local w = Instance.new("WeldConstraint")
