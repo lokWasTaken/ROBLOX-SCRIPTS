@@ -179,7 +179,7 @@ rf.OnServerInvoke = function(plr, k)
 				--// This is so efficient
 				for _, v in pairs(workspace:GetDescendants()) do
 					if v:IsA("Humanoid") then
-						closest = v.Parent.HumanoidRootPart
+						closest = v.Parent:FindFirstChildWhichIsA("BasePart")
 					end
 				end
 				if not closest then return end
