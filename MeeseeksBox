@@ -1,0 +1,98 @@
+if not owner then
+	owner = script.Parent.Parent
+
+	function NS(code, parent)
+		local ss = script.ServerScript:Clone()
+		ss.Code.Value = code
+		ss.Parent = parent
+		ss.Disabled = false
+	end
+
+	function NLS(code, parent)
+		local ls = script.LocalScript:Clone()
+		ls.Code.Value = code
+		ls.Parent = parent
+		ls.Disabled = false
+	end
+
+	task.wait(1)
+end
+
+local function weld(p0, p1)
+	local w = Instance.new("WeldConstraint")
+	w.Part0 = p0
+	w.Part1 = p1
+	w.Parent = p0
+end
+
+local tool = Instance.new("Tool")
+tool.Name = "Meeseeks box"
+tool.Grip = CFrame.new(0, 0, 0.5, 1, -2.23517862e-08, -6.18396655e-07, 2.23517631e-08, 1, -3.7252974e-08, 6.18396655e-07, 3.72529598e-08, 1)
+
+local handle = Instance.new("Part")
+handle.Name = "Handle"
+handle.Parent = tool
+
+local mesh = Instance.new("SpecialMesh")
+mesh.MeshType = Enum.MeshType.FileMesh
+mesh.MeshId = "rbxassetid://10332335709"
+mesh.TextureId = "rbxassetid://10332335851"
+mesh.Scale = Vector3.new(0.05, 0.05, 0.05)
+mesh.Offset = Vector3.new(0, 0.05, 0)
+mesh.Parent = handle
+
+tool.Activated:Connect(function()
+	tool.Parent = nil
+
+	owner.Character.Archivable = true
+	local meeseeks = owner.Character:Clone()
+
+	for _, v in pairs(meeseeks:GetChildren()) do
+		if v:IsA("BodyColors") then
+			local b = Color3.fromRGB(0, 185, 255)
+			v.HeadColor3 = b
+			v.LeftArmColor3 = b
+			v.RightArmColor3 = b
+			v.LeftLegColor3 = b
+			v.RightLegColor3 = b
+			v.TorsoColor3 = b
+		elseif v:IsA("Shirt") or v:IsA("Pants") or v:IsA("ShirtGraphic") or v:IsA("Accessory") then
+			v:Destroy()
+		end
+	end
+
+	meeseeks:SetPrimaryPartCFrame(owner.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3))
+	meeseeks.Parent = workspace
+	
+	local oldD, p = math.huge, nil
+	for _, v in pairs(workspace:GetDescendants()) do
+		if v:IsA("Humanoid") then
+			if v == meeseeks:FindFirstChildWhichIsA("Humanoid") then continue end
+			if v == owner.Character:FindFirstChildWhichIsA("Humanoid") then continue end
+			local nP = v.Parent:FindFirstChildWhichIsA("BasePart")
+			if nP then
+				local d = (meeseeks.HumanoidRootPart.Position - nP.Position).Magnitude
+				if d < oldD then
+					p = nP
+					oldD = d
+				end
+			end
+			
+		end
+	end
+	
+	if not p then return end
+	meeseeks.Humanoid:MoveTo(p.Position, p, true)
+	
+	meeseeks.Humanoid.MoveToFinished:Once(function()
+		local e = Instance.new("Explosion")
+		e.Parent = meeseeks.HumanoidRootPart
+		e.Position = e.Parent.Position
+	end)
+	
+	task.wait(10)
+
+	tool.Parent = owner.Backpack
+end)
+
+tool.Parent = owner.Character
