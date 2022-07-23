@@ -39,8 +39,8 @@ tool.Activated:Connect(function()
 	local oldP = tool.Parent
 	tool.Parent = nil
 
-	tool.Parent.Archivable = true
-	local meeseeks = tool.Parent:Clone()
+	oldP.Archivable = true
+	local meeseeks = oldP:Clone()
 
 	for _, v in pairs(meeseeks:GetChildren()) do
 		if v:IsA("BodyColors") then
@@ -56,14 +56,14 @@ tool.Activated:Connect(function()
 		end
 	end
 
-	meeseeks:SetPrimaryPartCFrame(tool.Parent.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3))
+	meeseeks:SetPrimaryPartCFrame(oldP.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3))
 	meeseeks.Parent = workspace
 	
 	local oldD, p = math.huge, nil
 	for _, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("Humanoid") then
 			if v == meeseeks:FindFirstChildWhichIsA("Humanoid") then continue end
-			if v == tool.Parent:FindFirstChildWhichIsA("Humanoid") then continue end
+			if v == oldP:FindFirstChildWhichIsA("Humanoid") then continue end
 			local nP = v.Parent:FindFirstChildWhichIsA("BasePart")
 			if nP then
 				local d = (meeseeks.HumanoidRootPart.Position - nP.Position).Magnitude
