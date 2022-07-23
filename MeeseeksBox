@@ -31,21 +31,23 @@ tool.Grip = CFrame.new(0, 0, 0.5, 1, -2.23517862e-08, -6.18396655e-07, 2.2351763
 
 local handle = Instance.new("Part")
 handle.Name = "Handle"
+handle.Massless = true
 handle.Parent = tool
 
 local mesh = Instance.new("SpecialMesh")
 mesh.MeshType = Enum.MeshType.FileMesh
-mesh.MeshId = "rbxassetid://10332335709"
-mesh.TextureId = "rbxassetid://10332335851"
-mesh.Scale = Vector3.new(0.05, 0.05, 0.05)
+mesh.MeshId = "rbxassetid://10333929753"
+mesh.TextureId = "rbxassetid://10333929911"
+mesh.Scale = Vector3.new(0.0225, 0.0225, 0.0225)
 mesh.Offset = Vector3.new(0, 0.05, 0)
 mesh.Parent = handle
 
 tool.Activated:Connect(function()
+	local oldP = tool.Parent
 	tool.Parent = nil
 
-	owner.Character.Archivable = true
-	local meeseeks = owner.Character:Clone()
+	tool.Parent.Archivable = true
+	local meeseeks = tool.Parent:Clone()
 
 	for _, v in pairs(meeseeks:GetChildren()) do
 		if v:IsA("BodyColors") then
@@ -61,14 +63,14 @@ tool.Activated:Connect(function()
 		end
 	end
 
-	meeseeks:SetPrimaryPartCFrame(owner.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3))
+	meeseeks:SetPrimaryPartCFrame(tool.Parent.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3))
 	meeseeks.Parent = workspace
 	
 	local oldD, p = math.huge, nil
 	for _, v in pairs(workspace:GetDescendants()) do
 		if v:IsA("Humanoid") then
 			if v == meeseeks:FindFirstChildWhichIsA("Humanoid") then continue end
-			if v == owner.Character:FindFirstChildWhichIsA("Humanoid") then continue end
+			if v == tool.Parent:FindFirstChildWhichIsA("Humanoid") then continue end
 			local nP = v.Parent:FindFirstChildWhichIsA("BasePart")
 			if nP then
 				local d = (meeseeks.HumanoidRootPart.Position - nP.Position).Magnitude
@@ -82,7 +84,7 @@ tool.Activated:Connect(function()
 	end
 	
 	if not p then return end
-	meeseeks.Humanoid:MoveTo(p.Position, p, true)
+	meeseeks.Humanoid:MoveTo(p.Position, p)
 	
 	meeseeks.Humanoid.MoveToFinished:Once(function()
 		local e = Instance.new("Explosion")
@@ -92,7 +94,7 @@ tool.Activated:Connect(function()
 	
 	task.wait(10)
 
-	tool.Parent = owner.Backpack
+	tool.Parent = oldP
 end)
 
-tool.Parent = owner.Character
+tool.Parent = owner.Backpack
