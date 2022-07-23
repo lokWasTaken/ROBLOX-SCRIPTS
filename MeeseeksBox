@@ -18,13 +18,6 @@ if not owner then
 	task.wait(1)
 end
 
-local function weld(p0, p1)
-	local w = Instance.new("WeldConstraint")
-	w.Part0 = p0
-	w.Part1 = p1
-	w.Parent = p0
-end
-
 local tool = Instance.new("Tool")
 tool.Name = "Meeseeks box"
 tool.Grip = CFrame.new(0, 0, 0.5, 1, -2.23517862e-08, -6.18396655e-07, 2.23517631e-08, 1, -3.7252974e-08, 6.18396655e-07, 3.72529598e-08, 1)
