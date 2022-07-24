@@ -59,134 +59,145 @@ end)
 
 ]], tool)
 
-local rf = Instance.new("RemoteFunction")
-rf.Name = "KEY_REMOTE"
-rf.Parent = tool
-
 local db = false
-rf.OnServerInvoke = function(plr, k)
-	if plr == game:GetService("Players"):GetPlayerFromCharacter(tool.Parent) then
-		if db then return end
-		db = true
-		if k == "Q" then
-			for _, v in pairs(tool.Parent:GetChildren()) do
-				if v.Name == "Portal" then
-					game:GetService("TweenService"):Create(v, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)}):Play()
-					game:GetService("Debris"):AddItem(v, 0.501)
+local function remote()
+	local rf = tool:FindFirstChild('KEY_REMOTE')
+	if rf then
+		return rf
+	end
+	
+	rf = Instance.new("RemoteFunction")
+	rf.Name = "KEY_REMOTE"
+	rf.Parent = tool
+
+	rf.OnServerInvoke = function(plr, k)
+		if plr == game:GetService("Players"):GetPlayerFromCharacter(tool.Parent) then
+			if db then return end
+			db = true
+			if k == "Q" then
+				for _, v in pairs(tool.Parent:GetChildren()) do
+					if v.Name == "Portal" then
+						game:GetService("TweenService"):Create(v, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)}):Play()
+						game:GetService("Debris"):AddItem(v, 0.501)
+					end
 				end
-			end
-		elseif k == "E" then
-			local portalPart = Instance.new("Part")
-			portalPart.Name = "Portal"
-			portalPart.Size = Vector3.new(0.25, 0.25, 0.25)
-			portalPart.CanCollide = false
-			portalPart.Anchored = true
-			portalPart.CFrame = handle.CFrame * CFrame.Angles(0, math.rad(-90), 0)
-			portalPart.Transparency = 1
+			elseif k == "E" then
+				local portalPart = Instance.new("Part")
+				portalPart.Name = "Portal"
+				portalPart.Size = Vector3.new(0.25, 0.25, 0.25)
+				portalPart.CanCollide = false
+				portalPart.Anchored = true
+				portalPart.CFrame = handle.CFrame * CFrame.Angles(0, math.rad(-90), 0)
+				portalPart.Transparency = 1
 
-			local decal = Instance.new("Decal")
-			decal.Texture = "rbxassetid://383899755"
-			decal.Parent = portalPart
-			decal.Face = Enum.NormalId.Left
+				local decal = Instance.new("Decal")
+				decal.Texture = "rbxassetid://383899755"
+				decal.Parent = portalPart
+				decal.Face = Enum.NormalId.Left
 
-			local dC = decal:Clone()
-			dC.Face = Enum.NormalId.Right
-			dC.Parent = portalPart
+				local dC = decal:Clone()
+				dC.Face = Enum.NormalId.Right
+				dC.Parent = portalPart
 
-			portalPart.Parent = tool.Parent
-			game:GetService("TweenService"):Create(portalPart, TweenInfo.new(0.75), {Size = Vector3.new(0.001, 7.5, 11.125), CFrame = tool.Parent.HumanoidRootPart.CFrame * CFrame.new(0, 1.125, -10) * CFrame.Angles(0, math.rad(90), 0)}):Play()
-			coroutine.wrap(function()
-				while portalPart do
-					portalPart.CFrame *= CFrame.Angles(math.rad(0.5), 0, 0)
-					task.wait()
-				end
-			end)()
-			task.wait(1.5)
+				portalPart.Parent = tool.Parent
+				game:GetService("TweenService"):Create(portalPart, TweenInfo.new(0.75), {Size = Vector3.new(0.001, 7.5, 11.125), CFrame = tool.Parent.HumanoidRootPart.CFrame * CFrame.new(0, 1.125, -10) * CFrame.Angles(0, math.rad(90), 0)}):Play()
+				coroutine.wrap(function()
+					while portalPart do
+						portalPart.CFrame *= CFrame.Angles(math.rad(0.5), 0, 0)
+						task.wait()
+					end
+				end)()
+				task.wait(1.5)
 
-			tool.Parent.Archivable = true
-			local morty = tool.Parent:Clone()
-			morty:SetPrimaryPartCFrame(portalPart.CFrame * CFrame.Angles(0, math.rad(90), 0))
-			coroutine.wrap(function()
-				local oldD, p = math.huge, nil
-				for _, v in pairs(workspace:GetDescendants()) do
-					if v:IsA("Humanoid") then
-						if v == morty:FindFirstChildWhichIsA("Humanoid") then continue end
-						if v == tool.Parent:FindFirstChildWhichIsA("Humanoid") then continue end
-						local nP = v.Parent:FindFirstChildWhichIsA("BasePart")
-						if nP then
-							local d = (morty.HumanoidRootPart.Position - nP.Position).Magnitude
-							if d < oldD then
-								p = nP
-								oldD = d
+				tool.Parent.Archivable = true
+				local morty = tool.Parent:Clone()
+				morty:SetPrimaryPartCFrame(portalPart.CFrame * CFrame.Angles(0, math.rad(90), 0))
+				coroutine.wrap(function()
+					local oldD, p = math.huge, nil
+					for _, v in pairs(workspace:GetDescendants()) do
+						if v:IsA("Humanoid") then
+							if v == morty:FindFirstChildWhichIsA("Humanoid") then continue end
+							if v == tool.Parent:FindFirstChildWhichIsA("Humanoid") then continue end
+							local nP = v.Parent:FindFirstChildWhichIsA("BasePart")
+							if nP then
+								local d = (morty.HumanoidRootPart.Position - nP.Position).Magnitude
+								if d < oldD then
+									p = nP
+									oldD = d
+								end
 							end
-						end
 
+						end
+					end
+
+					if not p then return end
+					morty.Humanoid:MoveTo(p.Position, p)
+					task.wait(10)
+					local e = Instance.new("Explosion")
+					e.Position = morty.HumanoidRootPart.Position
+					e.Parent = morty
+				end)()
+				for _, v in pairs(morty:GetChildren()) do
+					if v.Name == "Portal" then
+						v:Destroy()
+					end
+				end
+				pcall(function()
+					morty['Portal Gun']:Destroy()
+				end)
+				morty.Humanoid.DisplayName = "Morty"
+				morty.Parent = workspace
+
+				local shirt = morty:FindFirstChildWhichIsA("Shirt") or Instance.new("Shirt", morty)
+				shirt.ShirtTemplate = "rbxassetid://5962444893"
+				local pants = morty:FindFirstChildWhichIsA("Pants") or Instance.new("Pants", morty)
+				pants.PantsTemplate = "rbxassetid://129458425"
+
+				for _, v in pairs(morty:GetChildren()) do
+					if v:IsA("Accessory") then
+						v:Destroy()
 					end
 				end
 
-				if not p then return end
-				morty.Humanoid:MoveTo(p.Position, p)
-				task.wait(10)
-				local e = Instance.new("Explosion")
-				e.Position = morty.HumanoidRootPart.Position
-				e.Parent = morty
-			end)()
-			for _, v in pairs(morty:GetChildren()) do
-				if v.Name == "Portal" then
-					v:Destroy()
+				local accessory = Instance.new("Accessory")
+				do
+					accessory.Name = "BoyNormalHair1"
+
+					local handle = Instance.new("Part")
+					handle.Name = "Handle"
+					handle.Size = Vector3.new(1, 0.8, 1)
+					handle.Parent = accessory
+
+					local hairAttachment = Instance.new("Attachment")
+					hairAttachment.Name = "HairAttachment"
+					hairAttachment.Position = Vector3.new(0, 0.25, -0.063)
+					hairAttachment.Orientation = Vector3.new(-1.718, 0, 0)
+					hairAttachment.Parent = handle
+
+					local mesh = Instance.new("SpecialMesh")
+					mesh.Scale = Vector3.new(1.05, 1, 1.05)
+					mesh.MeshId = "rbxassetid://13332444"
+					mesh.TextureId = "rbxassetid://13332337"
+					mesh.Parent = handle
+
 				end
-			end
-			pcall(function()
-				morty['Portal Gun']:Destroy()
-			end)
-			morty.Humanoid.DisplayName = "Morty"
-			morty.Parent = workspace
 
-			local shirt = morty:FindFirstChildWhichIsA("Shirt") or Instance.new("Shirt", morty)
-			shirt.ShirtTemplate = "rbxassetid://5962444893"
-			local pants = morty:FindFirstChildWhichIsA("Pants") or Instance.new("Pants", morty)
-			pants.PantsTemplate = "rbxassetid://129458425"
+				morty.Humanoid:AddAccessory(accessory)
 
-			for _, v in pairs(morty:GetChildren()) do
-				if v:IsA("Accessory") then
-					v:Destroy()
-				end
-			end
-
-			local accessory = Instance.new("Accessory")
-			do
-				accessory.Name = "BoyNormalHair1"
-
-				local handle = Instance.new("Part")
-				handle.Name = "Handle"
-				handle.Size = Vector3.new(1, 0.8, 1)
-				handle.Parent = accessory
-
-				local hairAttachment = Instance.new("Attachment")
-				hairAttachment.Name = "HairAttachment"
-				hairAttachment.Position = Vector3.new(0, 0.25, -0.063)
-				hairAttachment.Orientation = Vector3.new(-1.718, 0, 0)
-				hairAttachment.Parent = handle
-
-				local mesh = Instance.new("SpecialMesh")
-				mesh.Scale = Vector3.new(1.05, 1, 1.05)
-				mesh.MeshId = "rbxassetid://13332444"
-				mesh.TextureId = "rbxassetid://13332337"
-				mesh.Parent = handle
+				task.wait(0.5)
+				game:GetService("TweenService"):Create(portalPart, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)}):Play()
+				task.wait(0.501) --// No debris for db
+				portalPart:Destroy()
 
 			end
-
-			morty.Humanoid:AddAccessory(accessory)
-
-			task.wait(0.5)
-			game:GetService("TweenService"):Create(portalPart, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = Vector3.new(0, 0, 0)}):Play()
-			task.wait(0.501) --// No debris for db
-			portalPart:Destroy()
-
+			db = false
 		end
-		db = false
 	end
+	
+	return rf
 end
+
+local rf = remote()
 
 tool.Activated:Connect(function()
 	if db then return end
