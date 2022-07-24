@@ -60,7 +60,7 @@ end)
 ]], tool)
 
 local db = false
-local function remote()
+function remote()
 	local rf = tool:FindFirstChild('KEY_REMOTE')
 	if rf then
 		return rf
@@ -193,6 +193,8 @@ local function remote()
 			db = false
 		end
 	end
+	
+	rf.Destroying:Once(remote)
 	
 	return rf
 end
