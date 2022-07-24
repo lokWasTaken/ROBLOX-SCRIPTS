@@ -57,6 +57,7 @@ tool.Activated:Connect(function()
 	end
 
 	meeseeks:SetPrimaryPartCFrame(oldP.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3))
+	meeseeks.Humanoid.DisplayName = "Meeseeks"
 	meeseeks.Parent = workspace
 	
 	local oldD, p = math.huge, nil
